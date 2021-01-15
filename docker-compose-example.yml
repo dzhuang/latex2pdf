@@ -1,11 +1,11 @@
 version: '2'
 services:
    latex2image:
-     image: dzhuang/latex2image
+     image: dzhuang/latex2pdf
      ports:
        - "8020:8020"
 #     volumes:
-#       - path/to/your/local/dir:latex2image/local_settings
+#       - path/to/your/local/dir:latex2pdf/local_settings
      environment:
        - L2I_SECRET_KEY=aldsjfgoiqo3jrjdfjipoj)lasdffjp98uqerljxbvjlk
        - L2I_ALLOWED_HOST1=www.example.org

@@ -50,7 +50,7 @@ python manage.py collectstatic
 if [[ $DOCKER_USERNAME ]]; then
 echo "----Building docker image.----"
 cd "$CWD" || exit 1
-docker build --no-cache . -t $DOCKER_USERNAME/latex2image:${TRAVIS_COMMIT::8} || exit 1
+docker build --no-cache . -t $DOCKER_USERNAME/latex2pdf:${TRAVIS_COMMIT::8} || exit 1
 
 echo "----Docker images----"
 docker images
