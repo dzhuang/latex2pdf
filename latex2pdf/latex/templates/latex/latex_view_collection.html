@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {{ form_description }} - LaTeX2Pdf
+{% endblock %}
+
+{% block head_assets_form_media %}
+    {{ form.media }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            {% if collection %}
+                {% if collection.compile_error %}
+                    <hr>
+                    <div class="alert alert-danger no-mathjax">
+                        <h2>{% trans "Compile Error" %}</h2>
+                        <p>
+                        <pre>{{ collection.compile_error | safe }}</pre>
+                        </p>
+                    </div>
+                {% endif %}
+            {% endif %}
+            {% for instance in instances %}
+                        <hr>
+                        <div class="alert alert-success no-mathjax">
+                            <h2>{% trans "Image" %}</h2>
+                            {#                    <hr>#}
+                            {#                    <div class="well"><img class="img-responsive" style="margin: 0 auto;" src="{{ instance.data_url }}"/></div>#}
+                            {#                    <hr>#}
+                            {#                    {% if size %}#}
+                            {#                        <div><b>{% trans "size" %}:</b> <span>{{ size |filesizeformat }}</span></div>#}
+                            {#                    {% endif %}#}
+                            <div><b>{% trans "path" %}:</b> <span> {{ instance.pdf.url }}</span></div>
+                            {#                    <div><b>{% trans "tex_key" %}:</b> <span> {{ instance.zip_file_key }}</span></div>#}
+                        </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -34,13 +34,16 @@ from django.utils.translation import ugettext_lazy as _
 from latex import api, views, auth
 
 
-admin.site.site_header = _("LaTeX2Image Admin")
-admin.site.site_title = _("LaTeX2Image Admin")
+admin.site.site_header = _("LaTeX2Pdf Admin")
+admin.site.site_title = _("LaTeX2Pdf Admin")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     url(r"^$", views.request_get_data_url_from_latex_form_request, name="home"),
+
+    url(r"^(?P<project_name>[a-zA-Z0-9_]+)/(?P<zip_file_key>[a-zA-Z0-9_]+)",
+        views.view_collection, name="view_collection"),
 
     url(r"^api/list$", api.LatexPdfList.as_view(), name="list"),
     url(r"^api/detail/(?P<tex_key>[a-zA-Z0-9_]+)$", api.LatexImageDetail.as_view(), name="detail"),

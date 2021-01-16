@@ -33,9 +33,12 @@ from crispy_forms.layout import Submit
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.db.transaction import atomic
-from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.conf import settings
+from django.shortcuts import (  # noqa
+        render, get_object_or_404, redirect)
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
 from rest_framework import status
 
 from latex.converter import (
@@ -117,6 +120,50 @@ class Zip2PdfForm(StyledFormMixin, forms.Form):
                 for required_file in [LATEXMKRC]:
                     if required_file not in zf.namelist():
                         raise forms.ValidationError(_("'%s' not found in zipfile uploaded" % required_file))
+
+
+def view_collection(request, project_name, zip_file_key=None):
+    if request.method == "POST":
+        raise PermissionDenied("Not allow to post")
+
+    project = get_object_or_404(LatexProject, name=project_name)
+
+    if project.is_private and request.user != project.creator:
+        raise PermissionDenied("Not allow to view project")
+
+    collections = LatexCollection.objects.filter(project=project)
+    pdf_instances = None
+
+    collection = None
+
+    if collections.count():
+        if zip_file_key is not None:
+            collections = collections.filter(zip_file_key=zip_file_key)
+            if collections.count():
+                collection = collections[0]
+            else:
+                raise Http404()
+        else:
+            collection = collections.order_by("-creation_time")[-1]
+
+    if collection:
+        pdf_instances = LatexPdf.objects.filter(project=project, collection=collection)
+
+    ctx = {"collection": collection,
+           "instances": pdf_instances}
+
+    render_kwargs = {
+        "request": request,
+        "template_name": "latex/latex_view_collection.html",
+        "context": ctx
+    }
+
+    if collection is not None:
+        if collection.compile_error:
+            render_kwargs["status"] = status.HTTP_400_BAD_REQUEST
+
+    return render(**render_kwargs)
+
 
 
 @login_required(login_url='/login/')

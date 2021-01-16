@@ -29,8 +29,8 @@ msgstr "以 %(username)s 登入"
 msgid "Sign in"
 msgstr "登入"
 
-msgid "LaTeX2Image Admin"
-msgstr "LaTeX2Image 站点管理"
+msgid "LaTeX2Pdf Admin"
+msgstr "LaTeX2Pdf 站点管理"
 
 msgid "has compile error"
 msgstr "有编译错误"

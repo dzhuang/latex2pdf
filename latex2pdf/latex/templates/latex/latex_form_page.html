@@ -5,7 +5,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-    {{ form_description }} - LaTeX2Image
+    {{ form_description }} - LaTeX2Pdf
 {% endblock %}
 
 {% block head_assets_form_media %}
@@ -26,48 +26,37 @@
         </div>
     </div>
     <div class="container l2i-output">
-    {% for instance in instances %}
         <div class="row">
-            {% if instance.compile_error or unknown_error %}
+            {% if collection.compile_error or unknown_error %}
                 <hr>
                 <div class="alert alert-danger no-mathjax">
-                    <h2>{% if instance.compile_error %}{% trans "Compile Error" %}{% else %}{% trans "Unknown Error" %}{% endif %}</h2>
+                    <h2>{% if collection.compile_error %}{% trans "Compile Error" %}{% else %}
+                        {% trans "Unknown Error" %}{% endif %}</h2>
                     <p>
-                    {% if instance.compile_error %}
-                        <pre>{{ instance.compile_error | safe }}</pre>
-                    {% else %}
-                        <pre>{{ unknown_error | safe }}</pre>
-                    {% endif %}
+                        {% if collection.compile_error %}
+                            <pre>{{ collection.compile_error | safe }}</pre>
+                        {% else %}
+                            <pre>{{ unknown_error | safe }}</pre>
+                        {% endif %}
                     </p>
                 </div>
             {% endif %}
-            {% if instances %}
-                {% for instance in instances %}
+
+            {% for instance in instances %}
                 <hr>
                 <div class="alert alert-success no-mathjax">
                     <h2>{% trans "Image" %}</h2>
-{#                    <hr>#}
-{#                    <div class="well"><img class="img-responsive" style="margin: 0 auto;" src="{{ instance.data_url }}"/></div>#}
-{#                    <hr>#}
-{#                    {% if size %}#}
-{#                        <div><b>{% trans "size" %}:</b> <span>{{ size |filesizeformat }}</span></div>#}
-{#                    {% endif %}#}
+                    {#                    <hr>#}
+                    {#                    <div class="well"><img class="img-responsive" style="margin: 0 auto;" src="{{ instance.data_url }}"/></div>#}
+                    {#                    <hr>#}
+                    {#                    {% if size %}#}
+                    {#                        <div><b>{% trans "size" %}:</b> <span>{{ size |filesizeformat }}</span></div>#}
+                    {#                    {% endif %}#}
                     <div><b>{% trans "path" %}:</b> <span> {{ instance.pdf.url }}</span></div>
-{#                    <div><b>{% trans "tex_key" %}:</b> <span> {{ instance.zip_file_key }}</span></div>#}
+                    {#                    <div><b>{% trans "tex_key" %}:</b> <span> {{ instance.zip_file_key }}</span></div>#}
                 </div>
-                {% endfor %}
-            {% endif %}
-            {% if tex_source %}
-                <hr>
-                <div class="alert alert-info no-mathjax">
-                    <h2>{% trans "Source Code" %}</h2>
-                    <div>
-                        <pre>{{ tex_source | safe }}</pre>
-                    </div>
-                </div>
-            {% endif %}
 
+            {% endfor %}
         </div>
-    {% endfor %}
     </div>
 {% endblock %}
