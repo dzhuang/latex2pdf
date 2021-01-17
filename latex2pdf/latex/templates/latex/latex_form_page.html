@@ -50,7 +50,7 @@
                     <div class="embed-responsive {% if instance.is_slide %}embed-responsive-a4{% else %}embed-responsive-4by3{% endif %}">
 
                         <iframe class='embed-responsive-item'
-                                src='{% static "pdf.js/build/minified/web/viewer.html" %}?file=https://staticssl.learningwhat.com/l2p_pdf/1/essay/9cd5eb5d581a6aefd3dcb3ee00f0d4fb/collection2.pdf'
+                                src='{% static "pdf.js/build/minified/web/viewer.html" %}?file={{instance.pdf.url}}'
                                 width='90%' allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
                     </div>
 
