@@ -7,7 +7,7 @@ from tests.base_test_mixins import (
 
 from latex.models import LatexPdf
 from latex.api import get_field_cache_key
-from latex.serializers import LatexImageSerializer
+from latex.serializers import LatexPdfSerializer
 
 
 class LatexImageReceiversTest(L2ITestMixinBase, TestCase):
@@ -88,7 +88,7 @@ class LatexImageReceiversTest(L2ITestMixinBase, TestCase):
     def test_delete_image_cache_deleted(self):
         instance = factories.LatexImageFactory()
 
-        serializer = LatexImageSerializer(instance)
+        serializer = LatexPdfSerializer(instance)
         data = serializer.to_representation(instance)
 
         creator_cache_key = get_field_cache_key(instance.tex_key, "creator")

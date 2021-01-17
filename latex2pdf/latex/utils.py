@@ -96,25 +96,6 @@ def popen_wrapper(args, os_err_exc_type=CommandError,
 # }}}
 
 
-# {{{ file read and write
-
-def file_read(filename):
-    # type: (Text) -> bytes
-    '''Read the content of a file and close it properly.'''
-    with open(filename, 'rb') as f:
-        return f.read()
-
-
-def file_write(filename, content):
-    # type: (Text, bytes) -> None
-    '''Write into a file and close it properly.'''
-    with open(filename, 'wb') as f:
-        f.write(content)
-
-
-# }}}
-
-
 # {{{ get error log abstracted
 
 LATEX_ERR_LOG_BEGIN_LINE_STARTS = "\n! "

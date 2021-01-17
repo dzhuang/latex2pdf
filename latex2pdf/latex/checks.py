@@ -28,22 +28,6 @@ from latex.utils import get_all_indirect_subclasses, CriticalCheckMessage
 from django.core.checks import register
 
 
-def bin_check(app_configs, **kwargs):
-    """
-    Check if all tex compiler and image converter
-    are correctly configured, if latex utility is
-    enabled.
-    """
-    from latex.converter import CommandBase
-
-    klass = get_all_indirect_subclasses(CommandBase)
-    instance_list = [cls() for cls in klass]
-    errors = []
-    for instance in instance_list:
-        errors.extend(instance.check())
-    return errors
-
-
 def settings_check(app_configs, **kwargs):
     errors = []
     from django.conf import settings
@@ -73,5 +57,4 @@ def settings_check(app_configs, **kwargs):
 
 def register_startup_checks():
     pass
-    # register(bin_check, "bin_check")
     # register(settings_check, "settings_check")

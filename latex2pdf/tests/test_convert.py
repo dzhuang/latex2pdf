@@ -2,15 +2,16 @@ import os
 from unittest import TestCase, mock
 
 from latex.converter import (
-    unzipped_folder_to_pdf_converter, get_tex2img_class, ImageConvertError, LatexCompileError,
+    unzipped_folder_to_pdf_converter, ImageConvertError, LatexCompileError,
     UnknownCompileError
 )
-from latex.utils import file_read, get_abstract_latex_log
+from latex.utils import get_abstract_latex_log
 from tests.base_test_mixins import get_latex_file_dir
 
 
 def get_file_content(file_path):
-    return file_read(file_path)
+    with open(file_path, "rb") as f:
+        return f.read()
 
 
 class TexToImgConverterTest(TestCase):

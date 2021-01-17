@@ -33,7 +33,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
 from latex.models import LatexPdf
-from latex.serializers import LatexImageSerializer
+from latex.serializers import LatexPdfSerializer
 from latex.converter import (
     unzipped_folder_to_pdf_converter, LatexCompileError,
 )
@@ -93,7 +93,7 @@ def get_cached_attribute_by_tex_key(zip_file_key, attr, request):
 
     obj = objs[0]
 
-    serializer = LatexImageSerializer(obj, fields=attr, context={"request": request})
+    serializer = LatexPdfSerializer(obj, fields=attr, context={"request": request})
 
     data = serializer.to_representation(obj)
 
@@ -221,7 +221,7 @@ class LatexImageCreate(
         CreateMixin, generics.CreateAPIView):
     renderer_classes = (L2IRenderer,)
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = LatexImageSerializer
+    serializer_class = LatexPdfSerializer
 
 
 class FieldsSerializerMixin:
@@ -236,7 +236,7 @@ class LatexImageDetail(
         FieldsSerializerMixin, generics.RetrieveUpdateDestroyAPIView):
     renderer_classes = (L2IRenderer,)
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = LatexImageSerializer
+    serializer_class = LatexPdfSerializer
 
     lookup_field = "tex_key"
 
@@ -264,7 +264,7 @@ class LatexImageDetail(
 class LatexPdfList(
         CreateMixin, FieldsSerializerMixin, generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = LatexImageSerializer
+    serializer_class = LatexPdfSerializer
     renderer_classes = (L2IRenderer,)
 
     def get_queryset(self):

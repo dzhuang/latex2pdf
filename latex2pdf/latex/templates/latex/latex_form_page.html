@@ -45,15 +45,10 @@
             {% for instance in instances %}
                 <hr>
                 <div class="alert alert-success no-mathjax">
-                    <h2>{% trans "Image" %}</h2>
-                    {#                    <hr>#}
-                    {#                    <div class="well"><img class="img-responsive" style="margin: 0 auto;" src="{{ instance.data_url }}"/></div>#}
-                    {#                    <hr>#}
-                    {#                    {% if size %}#}
-                    {#                        <div><b>{% trans "size" %}:</b> <span>{{ size |filesizeformat }}</span></div>#}
-                    {#                    {% endif %}#}
-                    <div><b>{% trans "path" %}:</b> <span> {{ instance.pdf.url }}</span></div>
-                    {#                    <div><b>{% trans "tex_key" %}:</b> <span> {{ instance.zip_file_key }}</span></div>#}
+                    <h2>{{ instance.name }}</h2>
+                    <div>
+                        <iframe class='embed-responsive-item' src = '{% static "pdf.js/web/viewer.html" %}?file=https://staticssl.learningwhat.com/l2p_pdf/1/essay/9cd5eb5d581a6aefd3dcb3ee00f0d4fb/collection2.pdf' width='100%' allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
+                    </div>
                 </div>
 
             {% endfor %}

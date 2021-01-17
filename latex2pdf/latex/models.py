@@ -37,24 +37,9 @@ from django.utils.html import mark_safe
 
 
 def pdf_upload_to(instance, filename):
-    return "l2p_pdf/{0}/{1}/{2}".format(instance.project.name, instance.collection.zip_file_key, filename)
-
-
-def convert_data_url_to_file_obj(data_url):
-    from binascii import a2b_base64
-    return a2b_base64(data_url)
-
-
-def make_pdf_file(data_url, file_base_name):
-    output = io.BytesIO(
-        convert_data_url_to_file_obj(data_url[data_url.index("base64,") + 7:]))
-    mime_type = data_url[5: data_url.index(";")]
-    assert mime_type == "application/pdf"
-    ext = ".pdf"
-
-    return InMemoryUploadedFile(
-        output, 'file', "%s%s" % (file_base_name, ext),
-        mime_type, output.tell(), None)
+    return "l2p_pdf/{0}/{1}/{2}/{3}".format(
+        instance.project.creator.id,
+        instance.project.name, instance.collection.zip_file_key, filename)
 
 
 class OverwriteStorage(get_storage_class()):
@@ -97,21 +82,19 @@ class LatexPdf(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False, verbose_name="File name")
     pdf = models.FileField(
         null=True, blank=True, upload_to=pdf_upload_to, storage=OverwriteStorage())
-    data_url = models.TextField(null=False, blank=False, verbose_name=_('Data Url'))
 
     class Meta:
         verbose_name = _("LaTeXPdf")
         verbose_name_plural = _("LaTeXPdfs")
 
-    def save(self, **kwargs):
-        # https://stackoverflow.com/a/18803218/3437454
-        if self.data_url:
-            self.pdf = make_pdf_file(self.data_url, self.name)
-
-        self.full_clean()
-        return super().save(**kwargs)
+    # def save(self, **kwargs):
+    #     # https://stackoverflow.com/a/18803218/3437454
+    #     if self.data_url:
+    #         self.pdf = make_pdf_file(self.data_url, self.name)
+    #
+    #     self.full_clean()
+    #     return super().save(**kwargs)
 
     def __repr__(self):
-        if self.data_url:
-            return "<project:%s, filename: %s, creation_time:%s, data_url:%s, path:%s>" % (
-                self.project, self.name, self.collection.creation_time, self.data_url[:50] + "...", self.pdf.url)
+        return "<project:%s, filename: %s, creation_time:%s, path:%s>" % (
+            self.project.name, self.name, self.collection.creation_time, self.pdf.url)

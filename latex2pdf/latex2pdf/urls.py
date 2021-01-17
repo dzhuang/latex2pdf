@@ -40,7 +40,7 @@ admin.site.site_title = _("LaTeX2Pdf Admin")
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    url(r"^$", views.request_get_data_url_from_latex_form_request, name="home"),
+    url(r"^$", views.request_get_compiled_pdf_from_latex_form_request, name="home"),
 
     url(r"^(?P<project_name>[a-zA-Z0-9_]+)/(?P<zip_file_key>[a-zA-Z0-9_]+)",
         views.view_collection, name="view_collection"),

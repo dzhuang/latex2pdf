@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 
-from latex.models import LatexPdf
+from latex.models import LatexProject, LatexCollection, LatexPdf
 
 
 class LatexImageAdminForm(forms.ModelForm):
@@ -27,8 +27,20 @@ class HasCompileErrorFilter(SimpleListFilter):
         return queryset
 
 
+class LatexProjectAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(LatexProject, LatexProjectAdmin)
+
+
+class LatexCollectionAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(LatexCollection, LatexCollectionAdmin)
+
 # class LatexPdfAdmin(admin.ModelAdmin):
-#     _readonly_fields = ["data_url", "compile_error"]
+#     _readonly_fields = ["compile_error"]
 #     list_display = (
 #             "id",
 #     )

@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+import shutil
 import tempfile
 import sys
 import zipfile
@@ -38,6 +39,7 @@ from django.conf import settings
 from django.shortcuts import (  # noqa
         render, get_object_or_404, redirect)
 from django.core.exceptions import PermissionDenied
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.http import Http404
 from rest_framework import status
 
@@ -165,9 +167,8 @@ def view_collection(request, project_name, zip_file_key=None):
     return render(**render_kwargs)
 
 
-
 @login_required(login_url='/login/')
-def request_get_data_url_from_latex_form_request(request):
+def request_get_compiled_pdf_from_latex_form_request(request):
     pdf_instances = None
     collection = None
     ctx = {}
@@ -199,7 +200,7 @@ def request_get_data_url_from_latex_form_request(request):
                     zf.extractall(working_dir)
 
                 try:
-                    data_urls_dict = unzipped_folder_to_pdf_converter(working_dir, compiler=compiler)
+                    compile_result_dict = unzipped_folder_to_pdf_converter(working_dir, compiler=compiler)
                 except Exception as e:
                     from traceback import print_exc
                     print_exc()
@@ -213,17 +214,26 @@ def request_get_data_url_from_latex_form_request(request):
                     else:
                         unknown_error = ctx["unknown_error"] = error_str
                 else:
-                    for (filename, data_url) in data_urls_dict.items():
+                    for (filename, filepath) in compile_result_dict.items():
+                        with open(filepath, "rb") as f:
+                            buff = io.BytesIO(f.read())
+
+                        pdf = InMemoryUploadedFile(
+                            file= buff, field_name='file', name=filename,
+                            content_type="application/pdf", size=buff.tell(), charset=None)
+
                         instance = LatexPdf(
                             project=project,
                             collection=collection,
                             name=filename,
-                            data_url=data_url,
+                            pdf=pdf,
                         )
                         with atomic():
                             instance.save()
                     pdf_instances = LatexPdf.objects.filter(
                         project=project, collection=collection)
+                finally:
+                    shutil.rmtree(working_dir)
 
     else:
         form = Zip2PdfForm()

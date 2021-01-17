@@ -27,18 +27,18 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
                 self.fields.pop(field_name)
 
 
-class LatexImageSerializer(DynamicFieldsModelSerializer):
+class LatexPdfSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = LatexPdf
         fields = ("id",
-                  "data_url",
                   "pdf",
                   )
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if not getattr(settings, "L2P_API_PDF_RETURNS_RELATIVE_PATH", True):
+            print(representation)
             return representation
 
         if "pdf" in representation and representation["pdf"] is not None:
