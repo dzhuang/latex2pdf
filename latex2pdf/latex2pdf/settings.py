@@ -248,8 +248,8 @@ LOGIN_REDIRECT_URL = 'home'
 # CORS_ORIGIN_WHITELIST: List of origins that are authorized to make cross-site HTTP requests. Defaults to []
 CORS_ORIGIN_ALLOW_ALL = os.environ.get("L2P_CORS_ORIGIN_ALLOW_ALL", None) is None
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8020',
-    'http://host.docker.internal:8020',
+    'http://localhost:8030',
+    'http://host.docker.internal:8030',
 )
 
 CORS_URLS_REGEX = r'^/api/.*$'
