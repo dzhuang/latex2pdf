@@ -29,8 +29,8 @@ build
 */docker-compose.yml
 local_settings.py
 */local_settings/requirements.txt
-/latex2image/l2i_images
-/latex2image/.coverage
-/latex2image/htmlcov
+/latex2pdf/l2i_images
+/latex2pdf/.coverage
+/latex2pdf/htmlcov
 /docker-compose.yml
-/latex2image/tests/*.ipynb
+/latex2pdf/tests/*.ipynb

@@ -1,6 +1,6 @@
 version: '2'
 services:
-   latex2image:
+   latex2pdf:
      image: dzhuang/latex2pdf
      ports:
        - "8030:8030"

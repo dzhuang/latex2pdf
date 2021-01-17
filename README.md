@@ -1,7 +1,7 @@
 # LaTeX2image
 
-[![Build Status](https://travis-ci.org/dzhuang/latex2image.svg?branch=master)](https://travis-ci.org/dzhuang/latex2image)
-[![codecov](https://codecov.io/gh/dzhuang/latex2image/branch/master/graph/badge.svg)](https://codecov.io/gh/dzhuang/latex2image)
+[![Build Status](https://travis-ci.org/dzhuang/latex2pdf.svg?branch=master)](https://travis-ci.org/dzhuang/latex2pdf)
+[![codecov](https://codecov.io/gh/dzhuang/latex2pdf/branch/master/graph/badge.svg)](https://codecov.io/gh/dzhuang/latex2pdf)
 
 ### A Dockerized Service Converting LaTeX code to images
 
@@ -9,15 +9,15 @@ Often, when we want to convert a LaTeX scripts to images (which is beyond the re
 the LaTeX compile environment. This project provide a Dockerized service which can be deployed within minutes,  with a 
 minimal disk space usage (no more than 1 GB).
 
-![screenshot](https://raw.githubusercontent.com/dzhuang/latex2image/master/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/dzhuang/latex2pdf/master/screenshot.png)
 
 ## Install and Usage
 Setup a MongoDB in you computer with default port (27017) opened, then run the following in your command line console:
     
-    docker pull dzhuang/latex2image:latest
+    docker pull dzhuang/latex2pdf:latest
 
-    git clone https://github.com/dzhuang/latex2image.git
-    cd latex2image
+    git clone https://github.com/dzhuang/latex2pdf.git
+    cd latex2pdf
 
     cp docker-compose-example.yml docker-compose.yml
     vi docker-compose.yml # Change your configurations
@@ -45,7 +45,7 @@ The following short-handed settings can be configured in your `docker-compose.ym
 | L2I_SECRET_KEY | The [SECRET_KEY](https://docs.djangoproject.com/en/dev/ref/settings/#secret-key) of your server. You need to configure this to keep you data safe.|
 | L2I_ALLOWED_HOST_*                  | A host which is to be appended to `settings.ALLOWED_HOSTS` |
 | L2I_MONGODB_HOST                   | The host name of the mongodb used  |
-| L2I_MONGO_DB_NAME  | The mongodb database name you prefer. If not set, `latex2image` will be used. |
+| L2I_MONGO_DB_NAME  | The mongodb database name you prefer. If not set, `latex2pdf` will be used. |
 | L2I_MONGODB_USERNAME                 | The username of mongodb used. If not set, it will not be set.   |
 | L2I_MONGODB_PASSWORD                 | The passwd of mongodb used.   |
 | L2I_CORS_ORIGIN_WHITELIST_*          | The allowed hosts which will not be checked by CSRF requests especially for API requests. (Notice, need to add `http:\\` or `https:\\` as prefix.) |
@@ -61,7 +61,7 @@ The following short-handed settings can be configured in your `docker-compose.ym
 
 ### Advanced Configurations
 
-You can map the folder `latex2image/local_settings` to your local machine in the `volumes` block, and write a file named `local_settings.py` in it
+You can map the folder `latex2pdf/local_settings` to your local machine in the `volumes` block, and write a file named `local_settings.py` in it
 to override all setting items (including those set in the `docker-compose.yml` file). Another assumption which makes you need to use the `local_settings.py`
 configurations is, the docker service assume there is a running MongoDB service with 27017 port opened. You can override that by using SQLite3 backends,
 but make sure you have correct volume map of that sqlite3 file, or you data will get lost when the container stops.
@@ -109,19 +109,19 @@ For `POST` request,  if you want a field to be cached and returned, you need to 
 
 ### Extra packages
 
-If you need to install more Python packages, you can map the folder `latex2image/local_settings` to a local folder, and
+If you need to install more Python packages, you can map the folder `latex2pdf/local_settings` to a local folder, and
 put a `requirements.txt` in it.
 
 ## Contribute to the project
 Contributions to the project are welcome.
 
-    git clone https://github.com/dzhuang/latex2image.git
-    cd latex2image
+    git clone https://github.com/dzhuang/latex2pdf.git
+    cd latex2pdf
     # Create virtualenv
     python -m virtualenv .env
     source .env/bin/activate
     
-    cd latex2image
+    cd latex2pdf
     pip install -r requirements.txt
     
     # Do your development...
