@@ -34,6 +34,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 from django.core.files.storage import get_storage_class
 from django.utils.html import mark_safe
+from jsonfield import JSONField
 
 
 def pdf_upload_to(instance, filename):
@@ -82,10 +83,18 @@ class LatexPdf(models.Model):
     name = models.CharField(max_length=200, null=False, blank=False, verbose_name="File name")
     pdf = models.FileField(
         null=True, blank=True, upload_to=pdf_upload_to, storage=OverwriteStorage())
+    mediabox = JSONField(null=True, blank=True, verbose_name=_('Media box size, in points'))
 
     class Meta:
         verbose_name = _("LaTeXPdf")
         verbose_name_plural = _("LaTeXPdfs")
+
+    def is_slide(self):
+        # width > height then it is a slide
+        if self.mediabox is None:
+            return False
+        width, height = map(int, self.mediabox[2:])
+        return width > height
 
     # def save(self, **kwargs):
     #     # https://stackoverflow.com/a/18803218/3437454

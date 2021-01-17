@@ -1,5 +1,5 @@
 @media (min-width: 768px) {
-    .l2i-input {
+    .l2p-input {
         position: absolute;
         top: 60px;
         left: 0;
@@ -10,7 +10,7 @@
         overflow-y: auto;
     }
 
-    .l2i-output {
+    .l2p-output {
         position: absolute;
         top: 60px;
         right: 0;
@@ -23,12 +23,12 @@
 }
 
 @media (max-width: 767px) {
-    .l2i-input.container > div {
+    .l2p-input.container > div {
         margin-left: 5px;
         margin-right: 5px;
     }
 
-    .l2i-output.container > div {
+    .l2p-output.container > div {
         margin-left: 5px;
         margin-right: 5px;
     }

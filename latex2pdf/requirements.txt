@@ -8,9 +8,6 @@ djongo==1.2.31
 pymongo==3.7.2
 sqlparse==0.2.4  # this is required by django 1.3.2
 
-# For ImageMagick
-wand
-
 # For mypy (static type checking) support
 typing>=3.6.1
 
@@ -35,3 +32,9 @@ django-redis
 
 # For web storage
 django-s3-storage
+
+# Jsonfield
+jsonfield
+
+# Read pdf
+pdfrw

@@ -29,6 +29,8 @@ import zipfile
 import io
 import os
 import hashlib
+import pathlib
+from pdfrw import PdfReader
 
 from crispy_forms.layout import Submit
 from django import forms
@@ -83,7 +85,7 @@ class Zip2PdfForm(StyledFormMixin, forms.Form):
             choices=tuple((c, c) for c in ["xelatex", "pdflatex"]),
             initial=("xelatex", "xelatex"),
             label=_("Compiler"),
-            required=False)
+            required=True)
 
         self.helper.form_class = "form-horizontal"
 
@@ -179,11 +181,11 @@ def request_get_compiled_pdf_from_latex_form_request(request):
             project_name = form.cleaned_data.get("project_name")
             zip_file_key = form.cleaned_data.get("zip_file_key")
             form_zip_file = request.FILES.get("zip_file")
-            compiler = form.cleaned_data.get("compiler")
+            compiler = form.cleaned_data["compiler"]
 
             if not zip_file_key.strip():
-                zip_file_key = hashlib.md5(form_zip_file.read()).hexdigest()
-                print(zip_file_key)
+                _md5 = hashlib.md5(form_zip_file.read()).hexdigest()
+                zip_file_key = "%s_%s" % (_md5, compiler)
 
             project, created = LatexProject.objects.get_or_create(
                 name=project_name, creator=request.user)
@@ -194,8 +196,6 @@ def request_get_compiled_pdf_from_latex_form_request(request):
 
             if not pdf_instances.count():
                 working_dir = tempfile.mkdtemp()
-                print(working_dir)
-
                 with zipfile.ZipFile(form_zip_file, "r") as zf:
                     zf.extractall(working_dir)
 
@@ -222,18 +222,22 @@ def request_get_compiled_pdf_from_latex_form_request(request):
                             file= buff, field_name='file', name=filename,
                             content_type="application/pdf", size=buff.tell(), charset=None)
 
+                        reader = PdfReader(filepath)
+                        mediabox = reader.getPage(0).MediaBox
+
                         instance = LatexPdf(
                             project=project,
                             collection=collection,
                             name=filename,
                             pdf=pdf,
+                            mediabox=mediabox
                         )
                         with atomic():
                             instance.save()
                     pdf_instances = LatexPdf.objects.filter(
                         project=project, collection=collection)
-                finally:
-                    shutil.rmtree(working_dir)
+                # finally:
+                #     shutil.rmtree(working_dir)
 
     else:
         form = Zip2PdfForm()
@@ -242,6 +246,7 @@ def request_get_compiled_pdf_from_latex_form_request(request):
     ctx["form_description"] = _("Convert Zipped LaTeX code to Pdf")
 
     ctx["collection"] = collection
+
     ctx["instances"] = pdf_instances
 
     render_kwargs = {
