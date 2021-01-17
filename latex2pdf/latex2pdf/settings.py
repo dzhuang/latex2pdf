@@ -189,18 +189,6 @@ print(client)
 # }}}
 
 
-# We are using ImageMagick to convert PDFs to PNG, resolution is density in ImageMagick
-# density=96 and quality=85 is google image resolution for images.
-
-# L2P_IMAGEMAGICK_PNG_RESOLUTION = 96
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-    }
-}
-
 L2P_CACHE_MAX_BYTES = 65536
 
 # L2P_API_PDF_RETURNS_RELATIVE_PATH: Default to True. If False, api query
