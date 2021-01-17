@@ -6,13 +6,12 @@ CWD=$(pwd)
 APPDIR="$(pwd)/latex2pdf"
 
 sudo apt-get update
-sudo apt-get -y install --no-install-recommends -qq wget curl imagemagick
+sudo apt-get -y install --no-install-recommends -qq wget curl
 sudo apt-get -y install --no-install-recommends -qq $(awk '{print $1'} texlive_apt.list)
 tex --version
 echo codecov >> "$APPDIR"/requirements.txt
 echo factory_boy >> "$APPDIR"/requirements.txt
 pip install --no-cache-dir -r "$APPDIR"/requirements.txt
-yes | sudo rm /etc/ImageMagick*/policy.xml # https://stackoverflow.com/a/54230833/3437454
 
 # if you need to install extra packages, specify in EXTRA_PACKAGE in Travis options.
 if [[ "$EXTRA_PACKAGE" ]]
@@ -37,6 +36,7 @@ then
   sudo tar -zxf fonts.tar.gz -C ./extra_fonts
   sudo cp -r ./extra_fonts /usr/share/fonts/
   sudo fc-cache -f
+
 else
   echo "----No user customized fonts.----"
 fi
