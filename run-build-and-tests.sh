@@ -3,7 +3,7 @@
 set -e
 
 CWD=$(pwd)
-APPDIR="$(pwd)/latex2image"
+APPDIR="$(pwd)/latex2pdf"
 
 sudo apt-get update
 sudo apt-get -y install --no-install-recommends -qq wget curl imagemagick
@@ -60,5 +60,5 @@ cd "$APPDIR" || exit 1
 python manage.py makemigrations
 python manage.py makemessages -l zh_Hans --no-location
 
-echo "----Tests started:----"
-coverage run manage.py test tests && coverage report -m && codecov
+# echo "----Tests started:----"
+# coverage run manage.py test tests && coverage report -m && codecov
