@@ -3,7 +3,7 @@ services:
    latex2image:
      image: dzhuang/latex2pdf
      ports:
-       - "8020:8020"
+       - "8030:8030"
 #     volumes:
 #       - path/to/your/local/dir:latex2pdf/local_settings
      environment:

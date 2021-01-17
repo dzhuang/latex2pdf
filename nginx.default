@@ -1,5 +1,5 @@
 server {
-    listen 8020;
+    listen 8030;
     server_name 127.0.0.1;
 
     location / {

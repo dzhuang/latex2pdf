@@ -24,7 +24,7 @@ Setup a MongoDB in you computer with default port (27017) opened, then run the f
 
     docker-compose up -d
 
-In your browser, navigate to http://127.0.0.1:8020/, and login with the superuser name you configured in the 
+In your browser, navigate to http://127.0.0.1:8030/, and login with the superuser name you configured in the 
 `docker-compose.yml` (see below).
 
 #### Notice:
