@@ -15,8 +15,8 @@ services:
 #       - L2I_MONGODB_PASSWORD=pass
        - L2I_CORS_ORIGIN_WHITELIST_0=http://www.abcd.com
        - L2I_CORS_ORIGIN_WHITELIST_0=http://www.cdef.com
-       - L2I_LANGUAGE_CODE=en-us
-#       - L2I_DEBUG=on
+       - L2P_LANGUAGE_CODE=en-us
+#       - L2P_DEBUG=on
        - DJANGO_SUPERUSER_USERNAME=me
        - DJANGO_SUPERUSER_PASSWORD=passwd
 #       - DJANGO_SUPERUSER_EMAIL=myemail@example.com
