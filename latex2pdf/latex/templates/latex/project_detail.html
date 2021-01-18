@@ -5,13 +5,8 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-    {{ form_description }} - LaTeX2Pdf
+    {{ collection.project.name }}{% if is_viewing_old_version %} - {{ collection.zip_file_hash }}{% endif %} - LaTeX2Pdf
 {% endblock %}
-
-{% block head_assets_form_media %}
-    {{ form.media }}
-{% endblock %}
-
 
 {% block content %}
     <div class="container">

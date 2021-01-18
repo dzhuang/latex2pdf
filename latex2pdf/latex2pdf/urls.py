@@ -44,14 +44,14 @@ urlpatterns = [
     url(r"^$", views.ProjectListView.as_view(), name="home"),
     url(r"^$", views.ProjectListView.as_view(), name="project-list"),
     url(r"^project/new$", views.ProjectCreateView.as_view(), name="project-create"),
-    url(r"^project/" + PROJECT_ID_REGEX + "/update$",
+    url(r"^project/" + PROJECT_ID_REGEX + "/update/$",
         views.update_project, name="project-update"),
-    url(r"^project/" + PROJECT_ID_REGEX + "/detail$",
+    url(r"^project/" + PROJECT_ID_REGEX + "/detail/$",
         views.view_collection, name="project-detail"),
     url(r"^project/(?P<pk>[0-9]+)/delete$",
         views.ProjectDeleteView.as_view(), name="project-delete"),
 
-    url(r"^project/" + PROJECT_ID_REGEX + "/detail/" + ZIP_FILE_HASH_REGEX,
+    url(r"^project/" + PROJECT_ID_REGEX + "/detail/" + ZIP_FILE_HASH_REGEX +"/$",
         views.view_collection, name="view-collection"),
 
     url(r"^api/list$", api.LatexPdfList.as_view(), name="list"),
