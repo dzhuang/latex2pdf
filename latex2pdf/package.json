@@ -5,6 +5,12 @@
     "font-awesome": "^4.7.0",
     "jquery": "^3.5.0",
     "jquery-ui-dist": "^1.12.1",
-    "pdf.js": "git://github.com/dzhuang/pdfjs-dist-viewer-min"
+    "pdf.js": "git://github.com/dzhuang/pdfjs-dist-viewer-min",
+    "datatables.net": "^1.10.16",
+    "datatables.net-bs": "^1.10.16",
+    "datatables.net-fixedcolumns": "^3.2.4",
+    "datatables.net-fixedcolumns-bs": "^3.2.4",
+    "datatables-i18n": "git://github.com/dzhuang/datatables-i18n",
+    "qrcode": "^1.4.4",
   }
 }

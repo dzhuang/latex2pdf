@@ -32,18 +32,27 @@ from django.conf.urls.static import static
 from django.utils.translation import ugettext_lazy as _
 
 from latex import api, views, auth
+from latex.constants import PROJECT_ID_REGEX, ZIP_FILE_HASH_REGEX
 
 
 admin.site.site_header = _("LaTeX2Pdf Admin")
 admin.site.site_title = _("LaTeX2Pdf Admin")
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r"^$", views.ProjectListView.as_view(), name="home"),
+    url(r"^$", views.ProjectListView.as_view(), name="project-list"),
+    url(r"^project/new$", views.ProjectCreateView.as_view(), name="project-create"),
+    url(r"^project/" + PROJECT_ID_REGEX + "/update$",
+        views.update_project, name="project-update"),
+    url(r"^project/" + PROJECT_ID_REGEX + "/detail$",
+        views.view_collection, name="project-detail"),
+    url(r"^project/(?P<pk>[0-9]+)/delete$",
+        views.ProjectDeleteView.as_view(), name="project-delete"),
 
-    url(r"^$", views.request_get_compiled_pdf_from_latex_form_request, name="home"),
-
-    url(r"^(?P<project_name>[a-zA-Z0-9_]+)/(?P<zip_file_key>[a-zA-Z0-9_]+)",
-        views.view_collection, name="view_collection"),
+    url(r"^project/" + PROJECT_ID_REGEX + "/detail/" + ZIP_FILE_HASH_REGEX,
+        views.view_collection, name="view-collection"),
 
     url(r"^api/list$", api.LatexPdfList.as_view(), name="list"),
     url(r"^api/detail/(?P<tex_key>[a-zA-Z0-9_]+)$", api.LatexImageDetail.as_view(), name="detail"),

@@ -305,6 +305,7 @@ MEDIA_ROOT = BASE_DIR + "/"
 
 # }}}
 
+SELECT2_I18N_PATH = 'select2/dist/js/i18n'
 
 if local_settings is not None:
     for name, val in local_settings.items():

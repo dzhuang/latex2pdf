@@ -22,25 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import io
-from urllib.parse import urljoin
-
 from django.db import models
 from django.core.validators import validate_slug
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 from django.core.files.storage import get_storage_class
-from django.utils.html import mark_safe
 from jsonfield import JSONField
 
 
 def pdf_upload_to(instance, filename):
     return "l2p_pdf/{0}/{1}/{2}/{3}".format(
         instance.project.creator.id,
-        instance.project.name, instance.collection.zip_file_key, filename)
+        instance.project.name, instance.collection.zip_file_hash, filename)
 
 
 class OverwriteStorage(get_storage_class()):
@@ -50,29 +44,56 @@ class OverwriteStorage(get_storage_class()):
 
 
 class LatexProject(models.Model):
+    identifier = models.CharField(
+        unique=True, db_index=True,
+        max_length=200, null=False, blank=False, verbose_name=_("Project identifier"),
+        validators=[validate_slug])
     name = models.CharField(
-        max_length=200, null=False, blank=False, verbose_name="Project name")
+        max_length=200, null=False, blank=False, verbose_name=_("Project name"))
+    description = models.TextField(
+        null=True, blank=True, verbose_name=_("Project Description"))
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=_('Creator'),
         on_delete=models.CASCADE)
     is_private = models.BooleanField(default=True)
 
+    def get_collections_info(self):
+        ordered_collections = LatexCollection.objects.filter(
+            project=self).order_by("-creation_time")
+
+        count = ordered_collections.count()
+        last_revision = None
+
+        if count:
+            last_revision = ordered_collections[0].creation_time
+
+        return count, last_revision
+
+    def __str__(self):
+        return _('project: "%s" (name: "%s")') % (self.identifier, self.name)
+
     class Meta:
-        unique_together = (("name", "creator"),)
+        verbose_name = _("Project")
+        verbose_name_plural = _("Projects")
 
 
 class LatexCollection(models.Model):
     project = models.ForeignKey(
         LatexProject, verbose_name=_('Project'), on_delete=models.CASCADE)
-    zip_file_key = models.TextField(
-        blank=False, db_index=True, verbose_name=_('Zip File Key'))
+    zip_file_hash = models.TextField(
+        blank=False, verbose_name=_('Zip File Hash'))
     compile_error = models.TextField(
         null=True, blank=True, verbose_name=_('Compile Error'))
     creation_time = models.DateTimeField(
         blank=False, default=now, verbose_name=_('Creation time'))
 
     class Meta:
-        unique_together = (("project", "zip_file_key"),)
+        unique_together = (("project", "zip_file_hash"),)
+        ordering = ("-creation_time",)
+
+    def __str__(self):
+        return _('project: "%s", zip file hash: "%s", created_at %s') % (
+            self.project.identifier, self.zip_file_hash, self.creation_time)
 
 
 class LatexPdf(models.Model):
@@ -95,14 +116,6 @@ class LatexPdf(models.Model):
             return False
         width, height = map(int, self.mediabox[2:])
         return width > height
-
-    # def save(self, **kwargs):
-    #     # https://stackoverflow.com/a/18803218/3437454
-    #     if self.data_url:
-    #         self.pdf = make_pdf_file(self.data_url, self.name)
-    #
-    #     self.full_clean()
-    #     return super().save(**kwargs)
 
     def __repr__(self):
         return "<project:%s, filename: %s, creation_time:%s, path:%s>" % (
