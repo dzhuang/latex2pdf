@@ -32,25 +32,28 @@ from django.conf.urls.static import static
 from django.utils.translation import ugettext_lazy as _
 
 from latex import api, views, auth
+from latex.constants import PROJECT_ID_REGEX, ZIP_FILE_HASH_REGEX
 
 
 admin.site.site_header = _("LaTeX2Pdf Admin")
 admin.site.site_title = _("LaTeX2Pdf Admin")
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r"^$", views.ProjectListView.as_view(), name="home"),
-    url(r"^project/new$", views.ProjectCreateView.as_view(), name="create-project"),
-    url(r"^project/(?P<project_identifier>[a-zA-Z0-9_]+)/update$",
-        views.update_project, name="update-project"),
-    url(r"^project/(?P<project_identifier>[a-zA-Z0-9_]+)/detail$",
-        views.view_collection, name="view-project"),
+    url(r"^$", views.ProjectListView.as_view(), name="project-list"),
+    url(r"^project/new$", views.ProjectCreateView.as_view(), name="project-create"),
+    url(r"^project/" + PROJECT_ID_REGEX + "/update$",
+        views.update_project, name="project-update"),
+    url(r"^project/" + PROJECT_ID_REGEX + "/detail$",
+        views.view_collection, name="project-detail"),
     url(r"^project/(?P<pk>[0-9]+)/delete$",
-        views.ProjectDeleteView.as_view(), name="delete-project"),
+        views.ProjectDeleteView.as_view(), name="project-delete"),
 
-
-    url(r"^project/(?P<project_identifier>[a-zA-Z0-9_]+)/hash/(?P<zip_file_hash>[a-zA-Z0-9_]+)",
+    url(r"^project/" + PROJECT_ID_REGEX + "/detail/" + ZIP_FILE_HASH_REGEX,
         views.view_collection, name="view-collection"),
+
     url(r"^api/list$", api.LatexPdfList.as_view(), name="list"),
     url(r"^api/detail/(?P<tex_key>[a-zA-Z0-9_]+)$", api.LatexImageDetail.as_view(), name="detail"),
     url(r"^api/create$", api.LatexImageCreate.as_view(), name="create"),

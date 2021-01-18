@@ -39,6 +39,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.views.generic import ListView, CreateView, DeleteView, DetailView
+from django.views.generic.edit import ModelFormMixin
 from django.http import Http404
 from django.urls import reverse, reverse_lazy
 from rest_framework import status
@@ -52,8 +53,12 @@ from latex.models import LatexProject, LatexCollection, LatexPdf
 from latex.utils import StyledFormMixin, get_codemirror_widget
 
 
+UPLOAD_FILE_MAX_BYTES = 64 * 1024 ** 2
+
+
 class ProjectListView(ListView):
     model = LatexProject
+    template_name = "latex/project_list.html"
 
 
 class ProjectCreateForm(StyledFormMixin, forms.ModelForm):
@@ -65,7 +70,7 @@ class ProjectCreateForm(StyledFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.helper.form_class = "form-horizontal"
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class ProjectCreateView(CreateView):
@@ -84,23 +89,36 @@ class ProjectCreateView(CreateView):
         return context
 
     def get_success_url(self):
-        return reverse_lazy("update_project", kwargs={"project_identifier": self.object.identifier})
+        return reverse_lazy(
+            "project-update", kwargs={"project_identifier": self.object.identifier})
 
 
-class ProjectDeleteView(DeleteView):
+class ProjectDeleteForm(StyledFormMixin, forms.ModelForm):
+    class Meta:
+        model = LatexProject
+        fields = ["identifier"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["identifier"].widget = forms.HiddenInput()
+        self.helper.add_input(Submit('submit', _('Confirm'), css_class="btn-danger"))
+
+
+class ProjectDeleteView(ModelFormMixin, DeleteView):
     model = LatexProject
-    success_url = reverse_lazy('home')
-    # template_name = "generic_form_page.html"
+    success_url = reverse_lazy('project-list')
+    template_name = "generic_form_page.html"
+    form_class = ProjectDeleteForm
 
-    # def get_queryset(self):
-    #     owner = self.request.user
-    #     return self.model.objects.filter(creator=owner)
+    def get_queryset(self):
+        owner = self.request.user
+        return self.model.objects.filter(creator=owner)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(ProjectDeleteView, self).get_context_data(**kwargs)
-    #     context["form_description"] = _("Delete Project")
-    #     print(context.get("form"))
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super(ProjectDeleteView, self).get_context_data(**kwargs)
+        context["form_description"] = _('Are you sure you want to delete project "%s"?' % self.object.identifier)
+        return context
 
 
 class CollectionCreateForm(StyledFormMixin, forms.Form):
@@ -108,17 +126,11 @@ class CollectionCreateForm(StyledFormMixin, forms.Form):
         super().__init__(*args, **kwargs)
 
         self.fields["zip_file"] = forms.FileField(
-            label=_("Zip File"), required=False,
-            help_text=_("Optional. If upload a zip file, it must contain "
+            label=_("Zip File"), required=True,
+            help_text=_("A zip file is required, it must contain "
                         "a .latexmkrc file to with @default_files and "
                         "compiler configured. Other options, except 'zip_file_hash'"
                         "in this form will be neglected."))
-
-        self.fields["zip_file_hash"] = forms.CharField(
-            required=False,
-            help_text=_("Optional. An unique string act as the identifier "
-                        "of the LaTeX code. If not specified, it will be "
-                        "generated automatically."))
 
         self.fields["compiler"] = forms.ChoiceField(
             choices=tuple((c, c) for c in ["xelatex", "pdflatex"]),
@@ -129,41 +141,35 @@ class CollectionCreateForm(StyledFormMixin, forms.Form):
         self.helper.form_class = "form-horizontal"
 
         self.helper.add_input(
-                Submit("convert", _("Convert")))
+                Submit("submit", _("Compile")))
 
     def clean(self):
         super().clean()
 
         zip_file = self.cleaned_data.get('zip_file', None)
+        from django.template.defaultfilters import filesizeformat
 
-        if not any([zip_file,
-                    self.cleaned_data.get("latex_code", None)]):
+        if zip_file.size > UPLOAD_FILE_MAX_BYTES:
             raise forms.ValidationError(
-                _("Either 'Zip File' or 'Tex Code' must be filled.")
-            )
+                _("Please keep file size under %(allowedsize)s. "
+                  "Current filesize is %(uploadedsize)s.")
+                % {'allowedsize': filesizeformat(UPLOAD_FILE_MAX_BYTES),
+                   'uploadedsize': filesizeformat(zip_file.size)})
 
-        if zip_file is not None:
-            from django.template.defaultfilters import filesizeformat
+        if not zipfile.is_zipfile(zip_file):
+            raise forms.ValidationError(
+                _("Please upload a zip file"))
 
-            if zip_file.size > self.txt_max_file_size:
-                raise forms.ValidationError(
-                    _("Please keep file size under %(allowedsize)s. "
-                      "Current filesize is %(uploadedsize)s.")
-                    % {'allowedsize': filesizeformat(self.txt_max_file_size),
-                       'uploadedsize': filesizeformat(zip_file.size)})
+        with zipfile.ZipFile(zip_file, "r") as zf:
+            bad_zipped = zf.testzip()
+            if zf.testzip() is not None:
+                raise forms.ValidationError(_("Bad file in zip file: %s" % bad_zipped))
 
-            if not zipfile.is_zipfile(zip_file):
-                raise forms.ValidationError(
-                    _("Please upload a zip file"))
+            for required_file in [LATEXMKRC]:
+                if required_file not in zf.namelist():
+                    raise forms.ValidationError(_("'%s' not found in zipfile uploaded" % required_file))
 
-            with zipfile.ZipFile(zip_file, "r") as zf:
-                bad_zipped = zf.testzip()
-                if zf.testzip() is not None:
-                    raise forms.ValidationError(_("Bad file in zip file: %s" % bad_zipped))
-
-                for required_file in [LATEXMKRC]:
-                    if required_file not in zf.namelist():
-                        raise forms.ValidationError(_("'%s' not found in zipfile uploaded" % required_file))
+        return self.cleaned_data
 
 
 def view_collection(request, project_identifier, zip_file_hash=None):
@@ -218,13 +224,11 @@ def update_project(request, project_identifier):
     if request.method == "POST":
         form = CollectionCreateForm(request.POST, request.FILES)
         if form.is_valid():
-            zip_file_hash = form.cleaned_data.get("zip_file_hash")
             form_zip_file = request.FILES.get("zip_file")
             compiler = form.cleaned_data["compiler"]
 
-            if not zip_file_hash.strip():
-                _md5 = hashlib.md5(form_zip_file.read()).hexdigest()
-                zip_file_hash = "%s_%s" % (_md5, compiler)
+            _md5 = hashlib.md5(form_zip_file.read()).hexdigest()
+            zip_file_hash = "%s_%s" % (_md5, compiler)
 
             project, created = LatexProject.objects.get_or_create(
                 identifier=project_identifier, creator=request.user)
@@ -243,6 +247,7 @@ def update_project(request, project_identifier):
             if collection is None:
                 collection = LatexCollection(project=project, zip_file_hash=zip_file_hash)
                 working_dir = tempfile.mkdtemp()
+                print(working_dir)
                 with zipfile.ZipFile(form_zip_file, "r") as zf:
                     zf.extractall(working_dir)
 
@@ -261,6 +266,8 @@ def update_project(request, project_identifier):
                     else:
                         unknown_error = ctx["unknown_error"] = error_str
                 else:
+                    with atomic():
+                        collection.save()
                     for (filename, filepath) in compiled_pdf_dict.items():
                         with open(filepath, "rb") as f:
                             buff = io.BytesIO(f.read())
@@ -298,7 +305,7 @@ def update_project(request, project_identifier):
 
     render_kwargs = {
         "request": request,
-        "template_name": "latex/latex_form_page.html",
+        "template_name": "latex/project_update.html",
         "context": ctx
     }
 

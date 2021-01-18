@@ -22,22 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import io
-from urllib.parse import urljoin
-
 from django.db import models
 from django.core.validators import validate_slug
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 from django.core.files.storage import get_storage_class
-from django.utils.html import mark_safe
 from jsonfield import JSONField
-
-
-PROJECT_NAME_VALIDATOR = "(?P<project_identifier>[-a-zA-Z0-9_]+)"
 
 
 def pdf_upload_to(instance, filename):
@@ -74,12 +65,12 @@ class LatexProject(models.Model):
         last_revision = None
 
         if count:
-            last_revision = ordered_collections[0]
+            last_revision = ordered_collections[0].creation_time
 
         return count, last_revision
 
-    def __repr__(self):
-        return "<project: %s, name: %s>" % (self.identifier, self.name)
+    def __str__(self):
+        return _('project: "%s" (name: "%s")') % (self.identifier, self.name)
 
     class Meta:
         verbose_name = _("Project")
@@ -90,7 +81,7 @@ class LatexCollection(models.Model):
     project = models.ForeignKey(
         LatexProject, verbose_name=_('Project'), on_delete=models.CASCADE)
     zip_file_hash = models.TextField(
-        blank=False, db_index=True, verbose_name=_('Zip File Hash'))
+        blank=False, verbose_name=_('Zip File Hash'))
     compile_error = models.TextField(
         null=True, blank=True, verbose_name=_('Compile Error'))
     creation_time = models.DateTimeField(
@@ -98,9 +89,10 @@ class LatexCollection(models.Model):
 
     class Meta:
         unique_together = (("project", "zip_file_hash"),)
+        ordering = ("-creation_time",)
 
-    def __repr__(self):
-        return "<project: %s, zip file hash: %s, created_at %s>" % (
+    def __str__(self):
+        return _('project: "%s", zip file hash: "%s", created_at %s') % (
             self.project.identifier, self.zip_file_hash, self.creation_time)
 
 
