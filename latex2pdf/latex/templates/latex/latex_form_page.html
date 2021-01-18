@@ -26,6 +26,7 @@
         </div>
     </div>
     <div class="container l2p-output">
+    {% if collection %}
         <div class="row">
             {% if collection.compile_error or unknown_error %}
                 <hr>
@@ -40,6 +41,10 @@
                         {% endif %}
                     </p>
                 </div>
+            {% else %}
+                {#  Todo: allow view history via dropdown  #}
+                ID: {{ collection.zip_file_hash }} -- {% trans "Compile time" %} {{ collection.creation_time }}
+                <hr>
             {% endif %}
             <div class="col-lg-12">
                 {% for instance in instances %}
@@ -57,6 +62,7 @@
                 {% endfor %}
             </div>
         </div>
+    {% endif %}
     </div>
 {% endblock %}
 

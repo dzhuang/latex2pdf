@@ -38,7 +38,7 @@ def pdf_delete(sender, instance, **kwargs):
     def_cache = cache.caches["default"]
 
     for attr in ("pdf", ):
-        def_cache.delete(get_field_cache_key(instance.collection.zip_file_key, attr))
+        def_cache.delete(get_field_cache_key(instance.collection.zip_file_hash, attr))
 
 
 @receiver(post_save, sender=LatexPdf)
@@ -72,4 +72,4 @@ def create_pdf_cache_on_save(sender, instance, **kwargs):
                 and len(str(attr_value)) <= getattr(
                     settings, "L2P_CACHE_MAX_BYTES", 0)):
             def_cache.add(
-                get_field_cache_key(instance.collection.zip_file_key, attr), attr_value, None)
+                get_field_cache_key(instance.collection.zip_file_hash, attr), attr_value, None)

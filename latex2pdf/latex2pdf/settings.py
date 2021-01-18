@@ -118,6 +118,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            "builtins": ["latex.templatetags.latextags"],
         },
     },
 ]
@@ -177,8 +178,6 @@ if mongo_user and mongo_pwd:
 if client and DATABASES["default"]["ENGINE"] == "djongo":
     DATABASES["default"]["CLIENT"] = client
 
-
-print(client)
 
 # Execute the following in mongo cmdline:
 # > use latex2pdf
