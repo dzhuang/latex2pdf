@@ -1,6 +1,18 @@
 from rest_framework import serializers
-from latex.models import LatexPdf
+from latex.models import LatexProject, LatexCollection, LatexPdf
 from django.conf import settings
+
+
+class LatexProjectSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LatexProject
+
+
+class LatexCollectionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LatexCollection
 
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
@@ -31,9 +43,7 @@ class LatexPdfSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = LatexPdf
-        fields = ("id",
-                  "pdf",
-                  )
+        fields = ("id", "pdf")
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

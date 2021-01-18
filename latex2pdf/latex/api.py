@@ -26,20 +26,49 @@ import sys
 
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+from django.db.models import Q
 
-from rest_framework.parsers import JSONParser
-from rest_framework import generics, permissions, status
+from rest_framework.parsers import JSONParser, MultiPartParser, ParseError
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
+from rest_framework.renderers import JSONRenderer, MultiPartRenderer
 
-from latex.models import LatexPdf
-from latex.serializers import LatexPdfSerializer
+from latex.models import LatexProject, LatexCollection, LatexPdf
+from latex.permissions import IsPrivateOrReadOnly
+from latex.serializers import (
+    LatexProjectSerializer, LatexCollectionSerializer, LatexPdfSerializer)
 from latex.converter import (
     unzipped_folder_to_pdf_converter, LatexCompileError,
 )
 
 
-class L2IRenderer(JSONRenderer):
+class L2PProjectViewSet(viewsets.ModelViewSet):
+    serializer_class = LatexProjectSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                          IsPrivateOrReadOnly]
+
+    def get_queryset(self):
+        return LatexProject.objects.filter(Q(creator=self.request.user) | Q(is_private=False))
+
+
+class L2PCollectionViewSet(viewsets.ModelViewSet):
+    serializer_class = LatexCollectionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                          IsPrivateOrReadOnly]
+    parser_classes = (MultiPartParser, JSONParser)
+
+    def get_queryset(self):
+        return LatexCollection.objects.filter(Q(project__creator=self.request.user) | Q(project__is_private=False))
+
+    def create(self, request, *args, **kwargs):
+        if 'file' not in request.data:
+            raise ParseError("Empty content")
+        file = request.data["file"]
+
+
+
+
+class L2PCollectionRenderer(JSONRenderer):
     """ If response contains "compile_error", always return 400 """
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
@@ -55,16 +84,17 @@ class L2IRenderer(JSONRenderer):
         return super().render(data, accepted_media_type, renderer_context)
 
 
-def get_field_cache_key(zip_file_key, field_name):
-    return "%s:%s" % (zip_file_key, field_name)
+
+def get_field_cache_key(zip_file_hash, field_name):
+    return "%s:%s" % (zip_file_hash, field_name)
 
 
-def get_cached_attribute_by_tex_key(zip_file_key, attr, request):
+def get_cached_attribute_by_tex_key(zip_file_hash, attr, request):
     try:
         import django.core.cache as cache
 
         def_cache = cache.caches["default"]
-        cache_key = get_field_cache_key(zip_file_key, attr)
+        cache_key = get_field_cache_key(zip_file_hash, attr)
     except ImproperlyConfigured:
         cache_key = None
 
@@ -79,7 +109,7 @@ def get_cached_attribute_by_tex_key(zip_file_key, attr, request):
             result_dict[attr] = ret_value
             return result_dict
 
-        compile_error_cache_key = get_field_cache_key(zip_file_key, "compile_error")
+        compile_error_cache_key = get_field_cache_key(zip_file_hash, "compile_error")
         cached_compile_error = def_cache.get(compile_error_cache_key)
         if cached_compile_error is not None:
             return {"compile_error": cached_compile_error}
@@ -87,7 +117,7 @@ def get_cached_attribute_by_tex_key(zip_file_key, attr, request):
     # print("Getting value from db")
 
     # Check db if it exists
-    objs = LatexPdf.objects.filter(project__zip_file_key=zip_file_key)
+    objs = LatexPdf.objects.filter(project__zip_file_hash=zip_file_hash)
     if not objs.count():
         return None if request.method == "POST" else {}
 
@@ -102,7 +132,7 @@ def get_cached_attribute_by_tex_key(zip_file_key, attr, request):
         result_dict["compile_error"] = compile_error
 
         if cache_key is not None:
-            compile_error_cache_key = get_field_cache_key(zip_file_key, "compile_error")
+            compile_error_cache_key = get_field_cache_key(zip_file_hash, "compile_error")
             def_cache.add(compile_error_cache_key, obj.compile_error, None)
         return result_dict
 
@@ -135,10 +165,9 @@ def get_cached_results_from_field_and_tex_key(tex_key, field_str, request):
 class CreateMixin:
     def create(self, request, *args, **kwargs):
         try:
-            req_params = JSONParser().parse(request)
+            req_params = MultiPartParser().parse(request)
             compiler = req_params.pop("compiler")
             tex_source = req_params.pop("tex_source")
-            image_format = req_params.pop("image_format")
             tex_key = req_params.pop("tex_key", None)
             field_str = req_params.pop("fields", None)
         except Exception:
@@ -172,7 +201,7 @@ class CreateMixin:
                 {"error": error},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        qs = LatexPdf.objects.filter(project__zip_file_key=_converter.zip_file_key)
+        qs = LatexPdf.objects.filter(project__zip_file_hash=_converter.zip_file_hash)
         if qs.count():
             instance = qs[0]
             image_serializer = self.get_serializer(
@@ -196,7 +225,7 @@ class CreateMixin:
 
         assert not all([data_url is None, error is None])
 
-        data = {"tex_key": _converter.zip_file_key}
+        data = {"tex_key": _converter.zip_file_hash}
         if data_url is not None:
             data["data_url"] = data_url
         else:
@@ -219,7 +248,7 @@ class CreateMixin:
 
 class LatexImageCreate(
         CreateMixin, generics.CreateAPIView):
-    renderer_classes = (L2IRenderer,)
+    renderer_classes = (L2PCollectionRenderer,)
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = LatexPdfSerializer
 
@@ -234,7 +263,7 @@ class FieldsSerializerMixin:
 
 class LatexImageDetail(
         FieldsSerializerMixin, generics.RetrieveUpdateDestroyAPIView):
-    renderer_classes = (L2IRenderer,)
+    renderer_classes = (L2PCollectionRenderer,)
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = LatexPdfSerializer
 
@@ -265,7 +294,7 @@ class LatexPdfList(
         CreateMixin, FieldsSerializerMixin, generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = LatexPdfSerializer
-    renderer_classes = (L2IRenderer,)
+    renderer_classes = (L2PCollectionRenderer,)
 
     def get_queryset(self):
         if not self.request.user.is_superuser:

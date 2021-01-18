@@ -46,7 +46,7 @@ admin.site.register(LatexCollection, LatexCollectionAdmin)
 #     )
 #     list_filter = ("creation_time", "creator", HasCompileErrorFilter)
 #     search_fields = (
-#             "zip_file_key",
+#             "zip_file_hash",
 #             "pdf",
 #             "compile_error")
 #
