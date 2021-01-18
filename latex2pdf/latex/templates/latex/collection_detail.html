@@ -17,7 +17,7 @@
         </div>
     {% else %}
         {#  Todo: allow view history via dropdown  #}
-        Hash: {{ collection.zip_file_hash }} -- {% trans "Compile time" %} {{ collection.creation_time }}
+        {% if is_viewing_old_version %} Hash: {{ collection.zip_file_hash }} -- {% endif %}{% trans "Compile time" %} {{ collection.creation_time }}
     {% endif %}
     <div class="col-lg-12">
         {% for instance in instances %}
