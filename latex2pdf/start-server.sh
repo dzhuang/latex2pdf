@@ -7,7 +7,7 @@
 
 USER_REQUIREMENTS=/opt/latex2pdf/local_settings/requirements.txt
 if test -f "$USER_REQUIREMENTS"; then
-    pip install -r $USER_REQUIREMENTS
+    pip install -r $USER_REQUIREMENTS --upgrade
 fi
 
 python manage.py makemigrations

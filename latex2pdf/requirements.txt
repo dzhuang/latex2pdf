@@ -4,7 +4,10 @@ django<3
 Pillow
 
 # Django and MongoDB database connector 
-djongo==1.3.3
+# djongo==1.3.3
+# Fix https://github.com/nesdis/djongo/issues/505
+git+https://github.com/lsaavedr/djongo.git
+
 pymongo==3.7.2
 sqlparse==0.2.4  # this is required by django 1.3.2
 
