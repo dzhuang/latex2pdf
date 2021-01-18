@@ -51,6 +51,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(generate_superuser),
         migrations.CreateModel(
             name='LatexCollection',
             fields=[
