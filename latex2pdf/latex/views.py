@@ -176,6 +176,8 @@ def view_collection(request, project_identifier, zip_file_hash=None):
     if request.method == "POST":
         raise PermissionDenied("Not allow to post")
 
+    is_viewing_old_version = zip_file_hash is None
+
     project = get_object_or_404(LatexProject, identifier=project_identifier)
 
     if project.is_private and request.user != project.creator:
@@ -200,7 +202,9 @@ def view_collection(request, project_identifier, zip_file_hash=None):
         pdf_instances = LatexPdf.objects.filter(project=project, collection=collection)
 
     ctx = {"collection": collection,
-           "instances": pdf_instances}
+           "instances": pdf_instances,
+           "is_viewing_old_version": is_viewing_old_version
+           }
 
     render_kwargs = {
         "request": request,
