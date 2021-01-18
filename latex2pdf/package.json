@@ -11,6 +11,6 @@
     "datatables.net-fixedcolumns": "^3.2.4",
     "datatables.net-fixedcolumns-bs": "^3.2.4",
     "datatables-i18n": "git://github.com/dzhuang/datatables-i18n",
-    "qrcode": "^1.4.4",
+    "qrcode": "^1.4.4"
   }
 }
