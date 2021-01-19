@@ -36,7 +36,9 @@ then
   sudo tar -zxf fonts.tar.gz -C ./extra_fonts
   sudo cp -r ./extra_fonts /usr/share/fonts/
   sudo fc-cache -f
-
+  wget -q -O tmp.zip https://github.com/leo-liu/zhmakeindex/releases/download/zhmakeindex-1.2/zhmakeindex-1.2.zip && unzip tmp.zip -d _tmp && rm tmp.zip && sudo cp _tmp/zhmakeindex/bin/linux_x64/zhmakeindex . && rm -rf _tmp
+  sudo chmod +x zhmakeindex
+  sudo cp -r ./zhmakeindex /usr/bin
 else
   echo "----No user customized fonts.----"
 fi
