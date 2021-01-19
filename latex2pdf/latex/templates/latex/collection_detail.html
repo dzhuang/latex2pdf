@@ -25,8 +25,8 @@
 
             <h2>{{ instance.name }}</h2>
 
-            <div class="embed-responsive {% if instance.is_slide %}embed-responsive-a4{% else %}embed-responsive-4by3{% endif %}">
-
+            <div class="embed-responsive{% if instance.is_slide %} embed-responsive-4by3{% endif %}"
+                 {% if not instance.is_slide %} style="padding-bottom: 141.42%;" {% endif %}>
                 <iframe class='embed-responsive-item'
                         src='{% static "pdf.js/build/minified/web/viewer.html" %}?file={{instance.pdf.url}}'
                         width='90%' allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
