@@ -3,7 +3,6 @@ MAINTAINER Dong Zhuang <dzhuang.scut@gmail.com>
 
 COPY ["latex2pdf", "texlive_apt.list", "/opt/latex2pdf/"]
 COPY extra_fonts /usr/share/fonts/extra_fonts
-COPY zhmakeindex /usr/bin
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends -qq nginx curl git memcached $(awk '{print $1'} /opt/latex2pdf/texlive_apt.list) \

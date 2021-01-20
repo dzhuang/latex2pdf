@@ -28,7 +28,6 @@ import sys
 import zipfile
 import io
 import hashlib
-from pdfrw import PdfReader
 
 from crispy_forms.layout import Submit
 from django import forms
@@ -90,7 +89,7 @@ class ProjectCreateView(CreateView):
 
     def get_success_url(self):
         return reverse_lazy(
-            "project-update", kwargs={"project_identifier": self.object.identifier})
+            "project-compile", kwargs={"project_identifier": self.object.identifier})
 
 
 class ProjectDeleteForm(StyledFormMixin, forms.ModelForm):
@@ -202,7 +201,7 @@ def view_collection(request, project_identifier, zip_file_hash=None):
         pdf_instances = LatexPdf.objects.filter(project=project, collection=collection)
 
     ctx = {"collection": collection,
-           "instances": pdf_instances,
+           "pdfs": pdf_instances,
            "is_viewing_old_version": is_viewing_old_version
            }
 
@@ -219,8 +218,15 @@ def view_collection(request, project_identifier, zip_file_hash=None):
     return render(**render_kwargs)
 
 
+def get_pdf_mediabox(filepath):
+    import fitz
+    doc = fitz.open(filepath)
+    page = doc.loadPage(0)
+    return list(page.MediaBox)
+
+
 @login_required(login_url='/login/')
-def update_project(request, project_identifier):
+def compile_project(request, project_identifier):
     pdf_instances = None
     collection = None
     ctx = {}
@@ -280,8 +286,8 @@ def update_project(request, project_identifier):
                             file=buff, field_name='file', name=filename,
                             content_type="application/pdf", size=buff.tell(), charset=None)
 
-                        reader = PdfReader(filepath)
-                        mediabox = reader.getPage(0).MediaBox
+                        mediabox = get_pdf_mediabox(filepath)
+                        print(mediabox)
 
                         pdf = LatexPdf(
                             project=project,
@@ -305,7 +311,7 @@ def update_project(request, project_identifier):
 
     ctx["collection"] = collection
 
-    ctx["instances"] = pdf_instances
+    ctx["pdfs"] = pdf_instances
 
     render_kwargs = {
         "request": request,
