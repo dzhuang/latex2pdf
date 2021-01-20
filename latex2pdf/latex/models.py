@@ -113,7 +113,7 @@ class LatexPdf(models.Model):
     def aspect_ratio(self):
         if self.mediabox is None:
             return None
-        width, height = map(int, self.mediabox[2:])
+        width, height = map(float, self.mediabox[2:])
         return "%3f%%" % float(height / width * 100)
 
     def __repr__(self):
