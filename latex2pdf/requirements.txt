@@ -39,5 +39,5 @@ django-s3-storage
 # Jsonfield
 jsonfield
 
-# Read pdf
-pdfrw
+# Read pdf info
+PyMuPDF

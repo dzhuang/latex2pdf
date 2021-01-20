@@ -110,12 +110,11 @@ class LatexPdf(models.Model):
         verbose_name = _("LaTeXPdf")
         verbose_name_plural = _("LaTeXPdfs")
 
-    def is_slide(self):
-        # width > height then it is a slide
+    def aspect_ratio(self):
         if self.mediabox is None:
-            return False
+            return None
         width, height = map(int, self.mediabox[2:])
-        return width > height
+        return "%3f%%" % float(height / width * 100)
 
     def __repr__(self):
         return "<project:%s, filename: %s, creation_time:%s, path:%s>" % (

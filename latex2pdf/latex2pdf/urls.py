@@ -45,7 +45,7 @@ urlpatterns = [
     url(r"^$", views.ProjectListView.as_view(), name="project-list"),
     url(r"^project/new$", views.ProjectCreateView.as_view(), name="project-create"),
     url(r"^project/" + PROJECT_ID_REGEX + "/update/$",
-        views.update_project, name="project-update"),
+        views.compile_project, name="project-compile"),
     url(r"^project/" + PROJECT_ID_REGEX + "/detail/$",
         views.view_collection, name="project-detail"),
     url(r"^project/(?P<pk>[0-9]+)/delete$",

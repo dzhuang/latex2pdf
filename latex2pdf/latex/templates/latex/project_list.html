@@ -43,8 +43,8 @@
                     <td class="datacol">{{ info.1 }}</td>
                     <td class="datacol">{{ project.is_private }}</td>
                     <td class="datacol">
-                        <a href="{% url "project-update" project.identifier %}" class="btn btn-default btn-xs">{% trans "Update" %}</a>
-                        <a href="{% url "project-delete" project.id %}" class="btn btn-danger btn-xs">{% trans "Delete" %}</a>
+                        <a href="{% url "project-compile" project.identifier %}" class="btn btn-success btn-xs" title="{% trans "Compile" %}"><i class="fa fa-rocket" aria-hidden="true"></i></i></a>
+                        <a href="{% url "project-delete" project.id %}" class="btn btn-danger btn-xs" title="{% trans "Delete" %}"><i class="fa fa-trash" aria-hidden="true"></i></a>
                     </td>
                 </tr>
             {% endwith %}
