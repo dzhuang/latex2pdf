@@ -59,6 +59,10 @@ class ProjectListView(ListView):
     model = LatexProject
     template_name = "latex/project_list.html"
 
+    def get_queryset(self):
+        owner = self.request.user
+        return self.model.objects.filter(creator=owner)
+
 
 class ProjectCreateForm(StyledFormMixin, forms.ModelForm):
     class Meta:
