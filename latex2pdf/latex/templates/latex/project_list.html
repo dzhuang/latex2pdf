@@ -5,7 +5,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-    {% trans "My Projects" %} - LaTeX2Pdf
+    {% trans "Projects" %} - LaTeX2Pdf
 {% endblock %}
 
 {% block header_extra %}
@@ -18,11 +18,38 @@
 
 
 {% block content %}
-    <h1>{% trans "My Projects" %}</h1>
+    <h1>{% trans "Projects" %}</h1>
 
-    <a href="{% url "project-create" %}" class="btn btn-default">{% trans "Create new project" %}</a>
+    {% if user.is_authenticated %}
+        <a href="{% url "project-create" %}" class="btn btn-default">{% trans "Create new project" %}</a>
+    {% endif %}
 
-    <table class="table table-striped l2p-projects">
+    <table class="table table-striped l2p-projects" id="open-projects">
+        <thead>
+        <th class="datacol">{% trans "Identifier" %}</th>
+        <th class="datacol">{% trans "Name" %}</th>
+        <th class="datacol">{% trans "Revisions" %}</th>
+        <th class="datacol">{% trans "Last update" %}</th>
+        </thead>
+        <tbody>
+        {% for project in object_list %}
+            {% if user == project.creator %}
+            {% with project.get_collections_info as info %}
+                <tr>
+                    <td class="datacol" data-order="{{ project.identifier }}">
+                        <a href="{% url "project-detail" project.identifier %}">{{ project.identifier }}</a>
+                    </td>
+                    <td class="datacol">{{ project.name }}</td>
+                    <td class="datacol">{{ info.0 }}</td>
+                    <td class="datacol">{{ info.1 }}</td>
+                </tr>
+            {% endwith %}
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="table table-striped l2p-projects" id="my-projects">
         <thead>
         <th class="datacol">{% trans "Identifier" %}</th>
         <th class="datacol">{% trans "Name" %}</th>
@@ -57,7 +84,13 @@
 {% block page_bottom_javascript_extra %}
     {% get_current_js_lang_name as LANG %}
     <script type="text/javascript">
-        var tbl = $("table.l2p-projects").dataTable({
+        let tbl1 = $("#open-projects").dataTable({
+            "scrollCollapse": true,
+            "paging": false,
+            "ordering": true,
+            "language": {url: '{% static "datatables-i18n/i18n/" %}{{LANG}}.json'},
+        });
+        let tbl2 = $("#my-projects").dataTable({
             "scrollCollapse": true,
             "paging": false,
             "ordering": true,
