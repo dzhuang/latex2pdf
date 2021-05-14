@@ -61,7 +61,7 @@ urlpatterns = [
 
     url(r'^login/$', auth_views.LoginView.as_view(
         template_name='registration/login.html', form_class=auth.AuthenticationForm,
-        extra_context={"form_description": "Login"}), name='login'),
+        extra_context={"form_description": _("Sign in")}), name='login'),
     url(r'^logout/$', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
     url(r'^profile/$', auth.user_profile, name='profile'),
 ]
