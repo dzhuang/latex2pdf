@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-14 19:51+0800\n"
+"POT-Creation-Date: 2021-05-14 21:15+0800\n"
 "PO-Revision-Date: 2020-06-28 12:24+0800\n"
 "Last-Translator: Dong zhuang<dzhuang.scut@gmail.com>\n"
 "Language: zh-hans\n"
@@ -40,6 +40,9 @@ msgstr "是"
 
 msgid "No"
 msgstr "否"
+
+msgid "creator"
+msgstr "创建者"
 
 msgid "Login"
 msgstr "登入"
@@ -118,9 +121,6 @@ msgstr "未知错误"
 msgid "Compiled at"
 msgstr "编译于"
 
-msgid "Create new project"
-msgstr "创建新项目"
-
 msgid "Public Projects"
 msgstr "公开项目"
 
@@ -150,6 +150,9 @@ msgstr "编译"
 
 msgid "Delete"
 msgstr "删除"
+
+msgid "Create new project"
+msgstr "创建新项目"
 
 msgid "Create Project"
 msgstr "创建项目"

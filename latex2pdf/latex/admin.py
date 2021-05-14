@@ -30,36 +30,44 @@ class HasCompileErrorFilter(SimpleListFilter):
 class LatexProjectAdmin(admin.ModelAdmin):
     pass
 
+
 admin.site.register(LatexProject, LatexProjectAdmin)
 
 
+class LatexPdfInline(admin.TabularInline):
+    model = LatexPdf
+    extra = 0
+
+
 class LatexCollectionAdmin(admin.ModelAdmin):
-    pass
+    def get_creator(self, obj):
+        return obj.project.creator
+    get_creator.short_description = _("creator")
+    get_creator.admin_order_field = "project__creator__username"
+
+    list_display = (
+        "id",
+        "project",
+        "get_creator",
+        "creation_time",
+        "zip_file_hash",
+    )
+
+    list_filter = (
+        "project",
+        "project__is_private",
+        "project__name",
+        "project__identifier"
+    )
+
+    search_fields = (
+            "zip_file_hash",
+            "project__creator__username",
+            "project__identifier",
+            "project__name",
+            )
+
+    inlines = (LatexPdfInline,)
 
 
 admin.site.register(LatexCollection, LatexCollectionAdmin)
-
-# class LatexPdfAdmin(admin.ModelAdmin):
-#     _readonly_fields = ["compile_error"]
-#     list_display = (
-#             "id",
-#     )
-#     list_filter = ("creation_time", "creator", HasCompileErrorFilter)
-#     search_fields = (
-#             "zip_file_hash",
-#             "pdf",
-#             "compile_error")
-#
-#     form = LatexImageAdminForm
-#     save_on_top = True
-#
-#     def get_form(self, *args, **kwargs):
-#         form = super(LatexPdfAdmin, self).get_form(*args, **kwargs)
-#
-#         for field_name in self._readonly_fields:
-#             form.base_fields[field_name].disabled = True
-#
-#         return form
-
-
-# admin.site.register(LatexPdf, LatexPdfAdmin)
