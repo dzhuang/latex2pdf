@@ -3,10 +3,10 @@ IMAGE=$DOCKER_USERNAME/latex2pdf
 
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-if [[ "$TRAVIS_BRANCH" != "master" ]]; then
-  IMAGE=$DOCKER_USERNAME/latex2pdf-$TRAVIS_BRANCH
+if [[ "$BRANCH_NAME" != "main" ]]; then
+  IMAGE=$DOCKER_USERNAME/latex2pdf-$BRANCH_NAME
 fi
 
-docker push $IMAGE:${TRAVIS_COMMIT::8}
-docker tag $IMAGE:${TRAVIS_COMMIT::8} $IMAGE:latest
+docker push $IMAGE:${COMMIT_SHA::8}
+docker tag $IMAGE:${COMMIT_SHA::8} $IMAGE:latest
 docker push $IMAGE:latest
