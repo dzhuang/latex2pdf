@@ -60,8 +60,18 @@ class ProjectListView(ListView):
     template_name = "latex/project_list.html"
 
     def get_queryset(self):
+        self.public_projects = self.model.objects.filter(is_private=False)
+        self.my_project = None
         owner = self.request.user
-        return self.model.objects.filter(creator=owner)
+        if owner.is_authenticated:
+            self.my_project = self.model.objects.filter(creator=owner)
+        return self.model.objects.all().order_by("-creation_time")
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectListView, self).get_context_data(**kwargs)
+        context["public_project"] = self.public_projects
+        context["my_project"] = self.my_project
+        return context
 
 
 class ProjectCreateForm(StyledFormMixin, forms.ModelForm):
@@ -116,6 +126,8 @@ class ProjectDeleteView(ModelFormMixin, DeleteView):
 
     def get_queryset(self):
         owner = self.request.user
+        if not owner.is_authenticated:
+            return self.model.objects.filter(is_private=False)
         return self.model.objects.filter(creator=owner)
 
     def get_context_data(self, **kwargs):
