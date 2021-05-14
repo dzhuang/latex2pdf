@@ -6,7 +6,7 @@ CWD=$(pwd)
 APPDIR="$(pwd)/latex2pdf"
 
 sudo apt-get update
-sudo apt-get -y install --no-install-recommends -qq wget curl
+sudo apt-get -y install --no-install-recommends -qq wget curl gettext
 sudo apt-get -y install --no-install-recommends -qq $(awk '{print $1'} texlive_apt.list)
 tex --version
 echo codecov >> "$APPDIR"/requirements.txt
