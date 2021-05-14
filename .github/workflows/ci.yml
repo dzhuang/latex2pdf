@@ -1,0 +1,26 @@
+name: build
+on:
+    push:
+        branches:
+            - main
+            - master
+            - with_cjk_font
+
+jobs:
+    build:
+        name: Build docker images
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - name: Build docker image
+              env:
+                  MY_EXTRA_FONTS_GZ: ${{ secrets.MY_EXTRA_FONTS_GZ }}
+                  EXTRA_PACKAGE: ${{ secrets.EXTRA_PACKAGE }}
+              run: bash ./run-build-and-tests.sh
+            - name: Upload docker image
+              env:
+                  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+                  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+                  COMMIT_SHA: ${{ github.sha }}
+                  BRANCH_NAME: ${{ github.ref }}
+              run: bash ./docker_push

@@ -13,7 +13,7 @@ echo codecov >> "$APPDIR"/requirements.txt
 echo factory_boy >> "$APPDIR"/requirements.txt
 pip install --no-cache-dir -r "$APPDIR"/requirements.txt
 
-# if you need to install extra packages, specify in EXTRA_PACKAGE in Travis options.
+# if you need to install extra packages, specify in EXTRA_PACKAGE in Github secrets.
 if [[ "$EXTRA_PACKAGE" ]]
 then
   sudo apt-get -y install --no-install-recommends -qq "$EXTRA_PACKAGE"
@@ -21,7 +21,7 @@ fi
 
 # Install extra fonts. Compress the fonts you want to include in you own build, and
 # make the file a downloadable link with ".tar.gz" extensions, and the put
-# the url in your Travis-CI env named "$MY_EXTRA_FONTS_GZ".
+# the url in your Github secrets named "MY_EXTRA_FONTS_GZ".
 
 # ALERT!!! To include fonts in your own builds, You must respect the intellectual property
 # rights (LICENSE) of those fonts, and take the correspond legal responsibility.
@@ -53,11 +53,11 @@ cd "$CWD" || exit 1
 
 IMAGE=$DOCKER_USERNAME/latex2pdf
 
-if [[ "$TRAVIS_BRANCH" != "master" ]]; then
-  IMAGE=$DOCKER_USERNAME/latex2pdf-$TRAVIS_BRANCH
+if [[ "$BRANCH_NAME" != "main" ]]; then
+  IMAGE=$DOCKER_USERNAME/latex2pdf-$BRANCH_NAME
 fi
 
-docker build --no-cache . -t $IMAGE:${TRAVIS_COMMIT::8} || exit 1
+docker build --no-cache . -t $IMAGE:${COMMIT_SHA::8} || exit 1
 
 echo "----Docker images----"
 docker images
