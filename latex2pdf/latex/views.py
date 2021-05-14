@@ -116,6 +116,8 @@ class ProjectDeleteView(ModelFormMixin, DeleteView):
 
     def get_queryset(self):
         owner = self.request.user
+        if not owner.is_authenticated:
+            return self.model.objects.filter(is_private=False)
         return self.model.objects.filter(creator=owner)
 
     def get_context_data(self, **kwargs):
