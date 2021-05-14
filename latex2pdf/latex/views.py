@@ -131,9 +131,8 @@ class CollectionCreateForm(StyledFormMixin, forms.Form):
         self.fields["zip_file"] = forms.FileField(
             label=_("Zip File"), required=True,
             help_text=_("A zip file is required, it must contain "
-                        "a .latexmkrc file to with @default_files and "
-                        "compiler configured. Other options, except 'zip_file_hash'"
-                        "in this form will be neglected."))
+                        "a .latexmkrc file with @default_files and "
+                        "compiler configured."))
 
         self.fields["compiler"] = forms.ChoiceField(
             choices=tuple((c, c) for c in ["xelatex", "pdflatex"]),

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-28 12:24+0800\n"
+"POT-Creation-Date: 2021-05-14 18:07+0800\n"
 "PO-Revision-Date: 2020-06-28 12:24+0800\n"
 "Last-Translator: Dong zhuang<dzhuang.scut@gmail.com>\n"
 "Language: zh-hans\n"
@@ -16,18 +16,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Staff"
-msgstr "管理员"
-
-msgid "Admin site"
-msgstr "管理网站"
-
 #, python-format
 msgid "Signed in as %(username)s"
 msgstr "以 %(username)s 登入"
 
 msgid "Sign in"
 msgstr "登入"
+
+msgid "Staff"
+msgstr "管理员"
+
+msgid "Admin site"
+msgstr "管理网站"
 
 msgid "LaTeX2Pdf Admin"
 msgstr "LaTeX2Pdf 站点管理"
@@ -54,86 +54,136 @@ msgid "User Profile"
 msgstr "用户信息"
 
 #, python-format
-msgid "No %s file was generated."
-msgstr "未生成%s文件."
+msgid "when executing '%s', "
+msgstr "在执行'%s'时，"
+
+msgid "no pdf file was generated."
+msgstr "未生成pdf文件."
 
 #, python-format
-msgid "No image was generated at %s"
-msgstr "目录%s未生成文件"
+msgid "No file named \"%s\" was generated after compile."
+msgstr "编译后未生成名为\"%s\"的文件."
 
-#, python-format
-msgid "Unsupported image format '%s'"
-msgstr "不支持的图片类型'%s'"
+msgid "Project identifier"
+msgstr "项目代号"
 
-#, python-format
-msgid "Unsupported tex compiler '%s'"
-msgstr "不支持的Tex编译器'%s'"
+msgid "Project name"
+msgstr "项目名称"
 
-#, python-format
-msgid ""
-"Unsupported combination: ('%(compiler)s', '%(format)s'). Currently support "
-"%(supported)s."
-msgstr "不支持的组合: ('%(compiler)s', '%(format)s'). 目前仅支持%(supported)s."
-
-msgid "Tex Key"
-msgstr "Tex Key"
-
-msgid "Creation time"
-msgstr "创建时间"
-
-msgid "Data Url"
-msgstr "Data Url"
-
-msgid "Compile Error"
-msgstr "编译错误"
+msgid "Project Description"
+msgstr "项目描述"
 
 msgid "Creator"
 msgstr "创建者"
 
-msgid "LaTeXImage"
+#, python-format
+msgid "project: \"%(project)s\" (name: \"%(name)s\")"
+msgstr "项目: \"%(project)s\" (名称: \"%(name)s\")"
+
+msgid "Project"
+msgstr "项目"
+
+msgid "Projects"
+msgstr "项目"
+
+msgid "Zip File Hash"
+msgstr "Zip文件Hash"
+
+msgid "Compile Error"
+msgstr "编译错误"
+
+msgid "Creation time"
+msgstr "创建时间"
+
+#, python-format
+msgid ""
+"project: \"%(project)s\", zip file hash: \"%(hash)s\", created_at %(time)s"
+msgstr "项目: \"%(project)s\", zip file hash: \"%(hash)s\", 创建时间 %(time)s"
+
+msgid "Collection"
+msgstr "集合"
+
+msgid "Media box size, in points"
 msgstr ""
 
-msgid "LaTeXImages"
-msgstr ""
+msgid "LaTeXPdf"
+msgstr "LaTeX2Pdf"
+
+msgid "LaTeXPdfs"
+msgstr "LaTeX2Pdf"
 
 msgid "Unknown Error"
 msgstr "未知错误"
 
-msgid "Image"
-msgstr "图像"
+msgid "Compiled at"
+msgstr "编译错误"
 
-msgid "size"
-msgstr "大小"
+msgid "Create new project"
+msgstr "创建新项目"
 
-msgid "path"
-msgstr "路径"
+msgid "Identifier"
+msgstr "代号"
 
-msgid "tex_key"
-msgstr ""
+msgid "Name"
+msgstr "名称"
 
-msgid "Source Code"
-msgstr "源代码"
+msgid "Revisions"
+msgstr "修订次数"
 
-msgid "Tex File"
-msgstr "Tex文件"
+msgid "Last update"
+msgstr "最后更新时间"
 
-msgid "Tex Code"
-msgstr "Tex代码"
+msgid "Is private"
+msgstr "私有"
 
-msgid "compiler and format"
-msgstr "编译器 与 图片格式"
+msgid "Action"
+msgstr "行动"
+
+msgid "Compile"
+msgstr "编译"
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Create Project"
+msgstr "创建项目"
+
+msgid "Confirm"
+msgstr "确认"
+
+#, python-format
+msgid "Are you sure you want to delete project \"%s\"?"
+msgstr "你确定要删除项目\"%s\"？"
+
+msgid "Zip File"
+msgstr "Zip文件"
 
 msgid ""
-"Optional. An unique string act as the identifier of the LaTeX code. If not "
-"specified, it will be generated automatically."
+"A zip file is required, it must contain a .latexmkrc file with "
+"@default_files and compiler configured."
 msgstr ""
-"可选. 一个作为所输入LaTeX代码的唯一标识的字符串. 如果不输入，它会自动生成."
+"必须上传一个zip文件，它里面必须包含一个.latexmkrc文件，且设置@default_files和"
+"编译器."
 
-msgid "Convert"
-msgstr "转换"
+msgid "Compiler"
+msgstr "编译器"
 
-msgid "Either 'Tex File' or 'Tex Code' must be filled."
-msgstr "'Tex File' 与 'Tex Code' 两者必须填入一个."
+#, python-format
+msgid ""
+"Please keep file size under %(allowedsize)s. Current filesize is "
+"%(uploadedsize)s."
+msgstr "请保证文件大小在%(allowedsize)s以下. 当前文件的大小为%(uploadedsize)s."
 
-msgid "Convert LaTeX code to Image"
-msgstr "将LaTeX代码转换为图像"
+msgid "Please upload a zip file"
+msgstr "请上传一个zip文件"
+
+#, python-format
+msgid "Bad file in zip file: %s"
+msgstr "zip文件中有坏文件：%s"
+
+#, python-format
+msgid "'%s' not found in zipfile uploaded"
+msgstr "上传的zip文件中未找到'%s'"
+
+msgid "Convert Zipped LaTeX code to Pdf"
+msgstr "将LaTeX代码转换为pdf"

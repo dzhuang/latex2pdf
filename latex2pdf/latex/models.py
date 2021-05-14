@@ -70,7 +70,8 @@ class LatexProject(models.Model):
         return count, last_revision
 
     def __str__(self):
-        return _('project: "%s" (name: "%s")') % (self.identifier, self.name)
+        return _('project: "%(project)s" (name: "%(name)s")') % {
+            "project": self.identifier, "name": self.name}
 
     class Meta:
         verbose_name = _("Project")
@@ -92,8 +93,10 @@ class LatexCollection(models.Model):
         ordering = ("-creation_time",)
 
     def __str__(self):
-        return _('project: "%s", zip file hash: "%s", created_at %s') % (
-            self.project.identifier, self.zip_file_hash, self.creation_time)
+        return _('project: "%(project)s", zip file hash: "%(hash)s", created_at %(time)s') % {
+            "project": self.project.identifier,
+            "hash": self.zip_file_hash,
+            "time": self.creation_time}
 
 
 class LatexPdf(models.Model):
