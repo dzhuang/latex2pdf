@@ -24,7 +24,6 @@
             <thead>
             <th class="datacol">{% trans "Identifier" %}</th>
             <th class="datacol">{% trans "Name" %}</th>
-            <th class="datacol">{% trans "Revisions" %}</th>
             <th class="datacol">{% trans "Last update" %}</th>
             </thead>
             <tbody>
@@ -35,7 +34,6 @@
                             <a href="{% url "project-detail" project.identifier %}">{{ project.identifier }}</a>
                         </td>
                         <td class="datacol">{{ project.name }}</td>
-                        <td class="datacol">{{ info.0 }}</td>
                         <td class="datacol">{{ info.1 }}</td>
                     </tr>
                 {% endwith %}
