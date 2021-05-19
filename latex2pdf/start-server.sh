@@ -13,5 +13,5 @@ fi
 python manage.py makemigrations
 python manage.py migrate --noinput
 
-(gunicorn latex2pdf.wsgi --user www-data --bind 0.0.0.0:8011 --workers 3) &
+(gunicorn latex2pdf.wsgi --user www-data --bind 0.0.0.0:8011 --workers 3 --timeout 300) &
 nginx -g "daemon off;"
